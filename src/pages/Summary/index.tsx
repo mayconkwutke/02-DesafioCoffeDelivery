@@ -5,7 +5,8 @@ import { useContext } from "react";
 import { CoffeeContext } from "../../context/CoffeeContext";
 
 export function Summary() {
-    const {purcheseData} = useContext(CoffeeContext)
+    const {listBuyCoffee} = useContext(CoffeeContext)
+    console.log(listBuyCoffee)
     return (
         <SummaryContainer>
             <SummaryHeader>
@@ -14,9 +15,9 @@ export function Summary() {
             </SummaryHeader>
             <SummaryMain>
                 <div>
-                    <p><IconStyledMap><MapPin weight="fill"/></IconStyledMap> Entrega em <span>{purcheseData?.endereco.rua}</span><br /> {purcheseData?.endereco.bairro} - {purcheseData?.endereco.cidade}, {purcheseData?.endereco.uf}</p>
+                    <p><IconStyledMap><MapPin weight="fill"/></IconStyledMap> Entrega em <span>{listBuyCoffee.endereco.rua}</span><br /> {listBuyCoffee.endereco.bairro} - {listBuyCoffee.endereco.cidade}, {listBuyCoffee.endereco.uf}</p>
                     <p><IconStyledTimer><Timer weight="fill"/></IconStyledTimer> Previsão de entrega <br /> <span>20 min - 30 min</span></p>
-                    <p><IconStyledDoll><CurrencyDollar weight="fill"/></IconStyledDoll> Pagamento da entrega <br /> <span>{purcheseData?.payment}</span></p>
+                    <p><IconStyledDoll><CurrencyDollar weight="fill"/></IconStyledDoll> Pagamento da entrega <br /> <span>{listBuyCoffee.payment}</span></p>
                 </div>
                 <img src={LogoDelivery} alt="" />
             </SummaryMain>

@@ -31,7 +31,7 @@ export function ItemList(data: ItemListProps) {
                     <p>{data.name}</p>
                     <div>
                         <input type="number" onChange={updateQuantityItem} step="1" defaultValue={data.quantity} />
-                        <button onClick={() => deleteCoffee(data.idItem)} type="submit"><Trash /> Remover</button>
+                        <button onClick={() => deleteCoffee(data.idItem)}><Trash /> Remover</button>
                     </div>
                 </header>
             </ItemDescript>

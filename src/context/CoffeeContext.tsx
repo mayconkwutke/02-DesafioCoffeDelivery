@@ -1,14 +1,17 @@
-import {createContext, ReactNode} from 'react';
+import {createContext, ReactNode, useEffect, useReducer} from 'react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { addNewCoffeeCart, updateCoffeeCart, deleteCoffeeCart, finishPurchaseCoffee } from '../reducers/actions/action';
+import { CoffeeType, coffeeReducer, CoffeeBuyType } from '../reducers/actions/reducer';
 
-interface CoffeeType {
-    id: string,
-    image: string,
-    name: string,
-    price: string,
-    quantity: string,
-    total: string,
-}
+// interface CoffeeType {
+//     id: string,
+//     image: string,
+//     name: string,
+//     price: string,
+//     quantity: string,
+//     total: string,
+// }
 
 export interface AddressType {
     cep: string,
@@ -20,80 +23,70 @@ export interface AddressType {
     uf: string,
 }
 
-interface coffeeBuyType {
-    id: string
-    coffee: CoffeeType[],
-    endereco: AddressType,
-    payment: string,
-    totalPrice: string
-}
 
 interface CoffeeContextProps {
-    purcheseData?: coffeeBuyType,
     listCoffe: CoffeeType[],
+    listBuyCoffee: CoffeeBuyType,
     handleSelectCoffee: (data: CoffeeType) => void
     handleUpdatedCoffeeQuantity: (data: any) => void
     deleteCoffee: (data: string) => void
-    finishPurchase: (data: coffeeBuyType) => void
+    finishPurchase: (data: any) => void
 }
 
 export const CoffeeContext = createContext ({} as CoffeeContextProps)
-
 interface CoffeeContextProviderProps {
     children: ReactNode
 }
 
 export function CoffeeContextProvider({children}: CoffeeContextProviderProps) {
-    const [listCoffe, setListCoffe] = useState<CoffeeType[]>([])
-    const [purcheseData, setPurcheseData] = useState<coffeeBuyType> ()
-    console.log(purcheseData)
+    const [coffeList, dispatch] = useReducer(
+        coffeeReducer,
+        {
+            listCoffe: [],
+            listBuyCoffee: [],
+        },
+        () => {
+            const storedStateAsJSON = localStorage.getItem(
+                '@desafio-coffeetype:coffee-1.0.0',
+            )
 
-    function handleSelectCoffee(data: CoffeeType) {
-        const coffeeCheck = listCoffe.findIndex(item => {
-            return item.name === data.name
-        })
-        if (coffeeCheck < 0){
-            console.log("Não Registrado")
-            setListCoffe([...listCoffe, data]);
-        }else {
-            console.log("Registrado")
-            const prevItem = [...listCoffe];
-            prevItem[coffeeCheck].quantity = String(parseInt(prevItem[coffeeCheck].quantity) + parseInt(data.quantity));
-            prevItem[coffeeCheck].total = String((parseFloat(prevItem[coffeeCheck].price) * parseInt(prevItem[coffeeCheck].quantity)));
-            setListCoffe(prevItem)
-        }
+            if (storedStateAsJSON) {
+                return JSON.parse(storedStateAsJSON)
+            }
+        },
+    )
+
+    
+    const {listCoffe, listBuyCoffee} = coffeList;
+    console.log(coffeList)
+    
+    useEffect(() => {
+        const stateJSON = JSON.stringify(coffeList)
         
+        localStorage.setItem('@desafio-coffeetype:coffee-1.0.0', stateJSON)
+      }, [coffeList])
+      
+    function handleSelectCoffee(data: CoffeeType) {
+        dispatch(addNewCoffeeCart(data))
     }
 
-    function handleUpdatedCoffeeQuantity(data: any) {
-        console.log(data)
-        const itemUpdate = listCoffe.findIndex(item => {
-            return item.id === data.idItem
-        })
-        const prevItem = [...listCoffe];
-        prevItem[itemUpdate].quantity = data.quantity;
-        prevItem[itemUpdate].total = String((parseFloat(prevItem[itemUpdate].price) * parseInt(data.quantity)));
-        setListCoffe(prevItem)
+    function handleUpdatedCoffeeQuantity(data: CoffeeType) {
+        dispatch(updateCoffeeCart(data))
     }
 
     function deleteCoffee(data: string) {
-        const itemDelete = listCoffe.filter(item => {
-            return item.id !== data
-        })
-        setListCoffe(itemDelete)
+        dispatch(deleteCoffeeCart(data))
     }
 
-    function finishPurchase(data: coffeeBuyType){
-        console.log("cheguei")
-        setPurcheseData(data)
-        setListCoffe([])
+    function finishPurchase(data: CoffeeBuyType){
+        dispatch(finishPurchaseCoffee(data))
     }
 
     return (
         <CoffeeContext.Provider
             value={{
-                purcheseData,
                 listCoffe,
+                listBuyCoffee,
                 handleSelectCoffee,
                 handleUpdatedCoffeeQuantity,
                 deleteCoffee,

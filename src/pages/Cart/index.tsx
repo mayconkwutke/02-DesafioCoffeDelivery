@@ -7,7 +7,7 @@ import {AddressType} from '../../context/CoffeeContext'
 import { useNavigate } from "react-router-dom";
 
 export function Cart() {
-    const {listCoffe, purcheseData ,finishPurchase}  = useContext(CoffeeContext)
+    const {listCoffe,finishPurchase}  = useContext(CoffeeContext)
     const [cartSelect, setCartSelect] = useState('')
     const [total, setTotal] = useState('')
     const [totalPrice, setTotalPrice] = useState('')
@@ -50,12 +50,13 @@ export function Cart() {
             totalPrice: totalPrice
         }
         finishPurchase(coffeeBuy)
+        navigate ("/summary")
     }
-    useEffect(() => {
-            if (isSubmit) {
-                return (navigate('/summary'));
-            }
-        }, [isSubmit])
+    // useEffect(() => {
+    //         if (isSubmit) {
+    //             return (navigate('/summary'));
+    //         }
+    //     }, [isSubmit])
 
     return (
         <CartContainer onSubmit={handeFinishBuy}>
@@ -98,15 +99,15 @@ export function Cart() {
                     <CardStyled>
                         <ul>
                             <li>
-                                <input type="radio" name="card" id="op1" value="Cartão de Credito" onChange={selectCartOption} required/>
+                                <input type="radio" name="card" id="op1" value="Cartão de Credito" onChange={selectCartOption} />
                                 <label htmlFor="op1"><CreditCard />CARTÃO DE CRÉDITO</label>
                             </li>
                             <li>
-                                <input type="radio" name="card" id="op2" value="Cartão de Debito" onChange={selectCartOption} required/>
+                                <input type="radio" name="card" id="op2" value="Cartão de Debito" onChange={selectCartOption} />
                                 <label htmlFor="op2"><Bank />CARTÃO DE DÉBITO</label>
                             </li>
                             <li>
-                                <input type="radio" name="card" id="op3" value="Dinheiro" onChange={selectCartOption} required/>
+                                <input type="radio" name="card" id="op3" value="Dinheiro" onChange={selectCartOption} />
                                 <label htmlFor="op3"><Money />DINHEIRO</label>
                             </li>
                         </ul>
